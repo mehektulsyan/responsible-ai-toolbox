@@ -29,6 +29,8 @@ from responsibleai.managers.error_analysis_manager import ErrorAnalysisManager
 from responsibleai.managers.explainer_manager import ExplainerManager
 from responsibleai.rai_insights.constants import ModelTask
 from responsibleai.rai_insights.rai_base_insights import RAIBaseInsights
+from ml_wrappers import wrap_model
+
 
 _TRAIN_LABELS = 'train_labels'
 _MODEL = "model"
@@ -99,6 +101,9 @@ class RAIInsights(RAIBaseInsights):
                                  of features in the dataset.
         :type feature_metadata: Optional[FeatureMetadata]
         """
+        self._wrapped_model = None
+        if model is not None:
+            self._wrapped_model = wrap_model(model, test, task_type)
         self._consolidate_categorical_features(
             categorical_features, feature_metadata)
 
@@ -113,10 +118,11 @@ class RAIInsights(RAIBaseInsights):
 
             if model is not None:
                 # Cache predictions of the model
-                self._large_predict_output = model.predict(
+                self._large_predict_output = self._wrapped_model.predict(
                     self._large_test.drop(columns=[target_column]))
-                if hasattr(model, SKLearn.PREDICT_PROBA):
-                    self._large_predict_proba_output = model.predict_proba(
+                if hasattr(self._wrapped_model, SKLearn.PREDICT_PROBA):
+                    wmodel = self._wrapped_model
+                    self._large_predict_proba_output = wmodel.predict_proba(
                         self._large_test.drop(columns=[target_column]))
                 else:
                     self._large_predict_proba_output = None
@@ -129,7 +135,7 @@ class RAIInsights(RAIBaseInsights):
             self._large_predict_proba_output = None
 
         self._validate_rai_insights_input_parameters(
-            model=model, train=train, test=test,
+            model=self._wrapped_model, train=train, test=test,
             target_column=target_column, task_type=task_type,
             classes=classes,
             serializer=serializer,
@@ -161,11 +167,11 @@ class RAIInsights(RAIBaseInsights):
 
         if model is not None:
             # Cache predictions of the model
-            self.predict_output = model.predict(
+            self.predict_output = self._wrapped_model.predict(
                 self.get_test_data(
                     test_data=test).drop(columns=[target_column]))
-            if hasattr(model, SKLearn.PREDICT_PROBA):
-                self.predict_proba_output = model.predict_proba(
+            if hasattr(self._wrapped_model, SKLearn.PREDICT_PROBA):
+                self.predict_proba_output = self._wrapped_model.predict_proba(
                     self.get_test_data(
                         test_data=test).drop(columns=[target_column]))
             else:
@@ -288,7 +294,7 @@ class RAIInsights(RAIBaseInsights):
             self.task_type, self.categorical_features, self._feature_metadata)
 
         self._counterfactual_manager = CounterfactualManager(
-            model=self.model, train=self.get_train_data(),
+            model=self._wrapped_model, train=self.get_train_data(),
             test=self.get_test_data(),
             target_column=self.target_column, task_type=self.task_type,
             categorical_features=self.categorical_features)
@@ -298,13 +304,13 @@ class RAIInsights(RAIBaseInsights):
             classes=self._classes, task_type=self.task_type)
 
         self._error_analysis_manager = ErrorAnalysisManager(
-            self.model, self.test, self.target_column,
+            self._wrapped_model, self.test, self.target_column,
             self._classes,
             self.categorical_features,
             dropped_features)
 
         self._explainer_manager = ExplainerManager(
-            self.model, self.get_train_data(), self.get_test_data(),
+            self._wrapped_model, self.get_train_data(), self.get_test_data(),
             self.target_column,
             self._classes,
             categorical_features=self.categorical_features)
@@ -685,7 +691,7 @@ class RAIInsights(RAIBaseInsights):
                 true_y = self.test[self.target_column]
 
         filter_data_with_cohort = FilterDataWithCohortFilters(
-            model=self.model,
+            model=self._wrapped_model,
             dataset=test_data.drop(columns=[self.target_column]),
             features=test_data.drop(columns=[self.target_column]).columns,
             categorical_features=self.categorical_features,
@@ -757,7 +763,7 @@ class RAIInsights(RAIBaseInsights):
                         len(metadata.dropped_features) != 0):
                     predict_dataset = predict_dataset.drop(
                         metadata.dropped_features, axis=1)
-                predicted_y = self.model.predict(predict_dataset)
+                predicted_y = self._wrapped_model.predict(predict_dataset)
             except Exception as ex:
                 msg = "Model does not support predict method for given"
                 "dataset type"
@@ -808,7 +814,7 @@ class RAIInsights(RAIBaseInsights):
                                  " from local explanations dimension")
             dashboard_dataset.feature_names = features
         dashboard_dataset.target_column = self.target_column
-        if is_classifier(self.model) and dataset is not None:
+        if is_classifier(self._wrapped_model) and dataset is not None:
             try:
                 predict_dataset = dataset
                 metadata = self._feature_metadata
@@ -819,7 +825,8 @@ class RAIInsights(RAIBaseInsights):
                         len(metadata.dropped_features) != 0):
                     predict_dataset = predict_dataset.drop(
                         metadata.dropped_features, axis=1)
-                probability_y = self.model.predict_proba(predict_dataset)
+                probability_y = self._wrapped_model.predict_proba(
+                    predict_dataset)
             except Exception as ex:
                 raise ValueError("Model does not support predict_proba method"
                                  " for given dataset type,") from ex
@@ -1106,5 +1113,6 @@ class RAIInsights(RAIBaseInsights):
                               RAIInsights._load_metadata)
         RAIInsights._load_predictions(inst, path)
         RAIInsights._load_large_data(inst, path)
-
+        inst._wrapped_model = wrap_model(inst.model, inst.test,
+                                         inst.task_type)
         return inst

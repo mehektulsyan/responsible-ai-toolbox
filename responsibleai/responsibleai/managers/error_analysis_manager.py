@@ -26,6 +26,8 @@ from responsibleai.exceptions import (ConfigAndResultMismatchException,
                                       DuplicateManagerConfigException,
                                       UserConfigValidationException)
 from responsibleai.managers.base_manager import BaseManager
+from ml_wrappers import wrap_model
+
 
 REPORTS = 'reports'
 CONFIG = 'config'
@@ -490,8 +492,10 @@ class ErrorAnalysisManager(BaseManager):
         if rai_insights._feature_metadata is not None:
             dropped_features = rai_insights._feature_metadata.dropped_features
         inst.__dict__['_dropped_features'] = dropped_features
+        wrapped_model = wrap_model(rai_insights.model, rai_insights.test,
+                                   rai_insights.task_type)
         wrapper_model = get_wrapped_model(
-            rai_insights.model,
+            wrapped_model,
             dropped_features)
         inst.__dict__['_analyzer'] = ModelAnalyzer(
             wrapper_model,
