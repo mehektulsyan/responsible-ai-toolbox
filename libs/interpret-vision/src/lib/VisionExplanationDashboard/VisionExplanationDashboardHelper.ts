@@ -33,7 +33,7 @@ export const defaultImageSizes = {
 };
 
 export function mapClassNames(
-  labels: number[] | number[][],
+  labels: number[] | number[][] | string[],
   classNames: string[]
 ): string[] | string[][] {
   if (Array.isArray(labels[0])) {
@@ -119,8 +119,8 @@ export function getItems(
 > {
   const indices = new Set(
     props.selectedCohort.cohort.filteredData.map(
-      (row: { [key: string]: number }) => {
-        return row[JointDataset.IndexLabel] as number;
+      (row: { [key: string]: string | number }) => {
+        return row[JointDataset.IndexLabel] as string | number;
       }
     )
   );

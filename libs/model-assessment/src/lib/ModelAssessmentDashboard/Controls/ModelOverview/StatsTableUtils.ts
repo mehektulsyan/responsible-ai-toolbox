@@ -403,6 +403,17 @@ export function getSelectableMetrics(
           .name
       }
     );
+  } else if (taskType === DatasetTaskType.QuestionAnswering) {
+    selectableMetrics.push(
+      {
+        description:
+          localization.ModelAssessment.ModelOverview.metrics.exactMatchRatio
+            .description,
+        key: MultilabelMetrics.ExactMatchRatio,
+        text: localization.ModelAssessment.ModelOverview.metrics.exactMatchRatio
+          .name
+      }
+    )
   } else {
     // task_type === "regression"
     selectableMetrics.push(
