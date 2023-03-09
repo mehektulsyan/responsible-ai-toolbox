@@ -69,7 +69,7 @@ export class JointDataset {
 
   // these properties should only be accessed by Cohort class,
   // which enables independent filtered views of this data
-  public dataDict: Array<{ [key: string]: number }> | undefined;
+  public dataDict: Array<{ [key: string]: number | string }> | undefined;
   public binDict: { [key: string]: number[] | undefined } = {};
 
   private readonly _modelMeta: IExplanationModelMetadata;
@@ -207,15 +207,21 @@ export class JointDataset {
       });
       // Set appropriate metadata
       if (args.metadata.modelType === ModelTypes.Regression && this.dataDict) {
-        const regressionErrorArray = this.dataDict.map(
-          (row) => row[JointDataset.RegressionError]
-        );
+        // const regressionErrorArray = this.dataDict.map(
+        //   (row) => row[JointDataset.RegressionError]
+        // );
+        // const featureRange = {};
+        // {
+        //   max: _.max(regressionErrorArray) || 0,
+        //   min: _.min(regressionErrorArray) || 0,
+        //   rangeType: RangeTypes.Numeric
+        // },
         this.metaDict[JointDataset.RegressionError] = {
           abbridgedLabel: localization.Interpret.Columns.error,
           category: ColumnCategories.Outcome,
           featureRange: {
-            max: _.max(regressionErrorArray) || 0,
-            min: _.min(regressionErrorArray) || 0,
+            max: 0,
+            min: 0,
             rangeType: RangeTypes.Numeric
           },
           isCategorical: false,
@@ -449,7 +455,11 @@ export class JointDataset {
       this.dataDict?.forEach((row, rowIndex) => {
         const numVal = row[key];
         row[key] = sortedUniqueValues.indexOf(numVal);
-        this.numericValuedColumnsCache[rowIndex][key] = numVal;
+        if (typeof numVal === "string") {
+          this.numericValuedColumnsCache[rowIndex][key] = 0;
+        } else {
+          this.numericValuedColumnsCache[rowIndex][key] = numVal;
+        }
       });
     } else {
       this.dataDict?.forEach((row, rowIndex) => {
@@ -663,7 +673,7 @@ export class JointDataset {
   }
 
   private updateMetaDataDict(
-    values: number[] | number[][],
+    values: number[] | number[][] | string[],
     metadata: IExplanationModelMetadata,
     labelColName: string,
     abbridgedLabel: string,
