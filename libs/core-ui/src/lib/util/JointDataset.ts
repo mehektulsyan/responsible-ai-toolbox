@@ -663,7 +663,7 @@ export class JointDataset {
   }
 
   private updateMetaDataDict(
-    values: number[] | number[][],
+    values: number[] | number[][] | string[],
     metadata: IExplanationModelMetadata,
     labelColName: string,
     abbridgedLabel: string,
@@ -679,7 +679,7 @@ export class JointDataset {
             this.dataDict[index][labelColName + subIndex.toString()] = subVal;
           }
         });
-      } else if (this.dataDict) {
+      } else if (this.dataDict && typeof val !== "string") {
         this.dataDict[index][labelColName] = val;
       }
     });

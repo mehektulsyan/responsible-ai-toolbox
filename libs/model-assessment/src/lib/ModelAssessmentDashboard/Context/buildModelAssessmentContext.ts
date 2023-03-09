@@ -135,7 +135,7 @@ function buildModelMetadata(
   props: IModelAssessmentDashboardProps
 ): IExplanationModelMetadata {
   let classNames = props.dataset.class_names;
-  const modelType = getModelTypeFromProps(props);
+  const modelType = getModelTypeFromProps(props, classNames);
   let featureNames = props.dataset.feature_names;
   let featureNamesAbridged: string[];
   const maxLength = 18;

@@ -12,6 +12,7 @@ import {
   emotion,
   emotionModelExplanationData
 } from "../model-assessment-text/__mock_data__/emotion";
+import { squad } from "../model-assessment-text/__mock_data__/squad";
 
 import {
   IDataSet,
@@ -54,6 +55,10 @@ export const textApplications: ITextApplications = <const>{
         classDimension: 3,
         dataset: emotion,
         modelExplanationData: [emotionModelExplanationData]
+      } as IModelAssessmentDataSet,
+      squad: {
+        classDimension: 3,
+        dataset: squad
       } as IModelAssessmentDataSet
     },
     versions: { "1": 1, "2:Static-View": 2 }

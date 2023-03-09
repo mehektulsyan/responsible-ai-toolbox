@@ -33,7 +33,8 @@ import {
   TelemetryLevels,
   TelemetryEventName,
   DatasetTaskType,
-  ImageClassificationMetrics
+  ImageClassificationMetrics,
+  QuestionAnsweringMetrics
 } from "@responsible-ai/core-ui";
 import { localization } from "@responsible-ai/localization";
 import React from "react";
@@ -147,6 +148,10 @@ export class ModelOverview extends React.Component<
         ObjectDetectionMetrics.AveragePrecision,
         ObjectDetectionMetrics.AverageRecall
       ];
+    } else if (
+      this.context.dataset.task_type === DatasetTaskType.QuestionAnswering
+    ) {
+      defaultSelectedMetrics = [QuestionAnsweringMetrics.ExactMatchRatio];
     } else {
       // task_type === "regression"
       defaultSelectedMetrics = [

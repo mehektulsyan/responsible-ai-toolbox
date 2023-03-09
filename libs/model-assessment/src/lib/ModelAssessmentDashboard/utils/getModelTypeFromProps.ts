@@ -11,10 +11,10 @@ import {
 import { IModelAssessmentDashboardProps } from "../ModelAssessmentDashboardProps";
 
 export function getModelTypeFromProps(
-  props: IModelAssessmentDashboardProps
+  props: IModelAssessmentDashboardProps,
+  classNames: string[] | undefined
 ): ModelTypes {
   let modelType: ModelTypes = ModelTypes.Multiclass;
-  const classNames = props.dataset.class_names;
   if (props.dataset.task_type === DatasetTaskType.Regression) {
     modelType = ModelTypes.Regression;
   } else if (props.dataset.task_type === DatasetTaskType.Classification) {
@@ -50,6 +50,8 @@ export function getModelTypeFromProps(
     props.dataset.task_type === DatasetTaskType.MultilabelTextClassification
   ) {
     modelType = ModelTypes.TextMultilabel;
+  } else if (props.dataset.task_type === DatasetTaskType.QuestionAnswering) {
+    modelType = ModelTypes.QuestionAnswering;
   }
   return modelType;
 }
