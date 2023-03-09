@@ -25,7 +25,7 @@ export async function getTreatmentValue(
 ): Promise<number> {
   const featureKey =
     JointDataset.DataLabelRoot + dataset.feature_names.indexOf(featureName);
-  let treatmentValue = cohort.getRow(selectedIndex)[featureKey];
+  let treatmentValue = cohort.getNumericRow(selectedIndex)[featureKey];
 
   if (ifEnableLargeData(dataset)) {
     const testDataRow = await getTestDataRow(

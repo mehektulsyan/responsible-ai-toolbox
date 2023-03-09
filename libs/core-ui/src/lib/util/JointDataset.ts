@@ -409,7 +409,7 @@ export class JointDataset {
     return this._modelMeta.classNames;
   }
 
-  public getRow(index: number): { [key: string]: number } {
+  public getRow(index: number): { [key: string]: string | number } {
     return { ...this.dataDict?.[index] };
   }
 
@@ -441,7 +441,7 @@ export class JointDataset {
     if (value) {
       const values = this.dataDict?.map((row) => row[key]);
       const sortedUniqueValues = _.uniq(values).sort((a, b) => {
-        return a - b;
+        return a - b ? typeof values === "number" : undefined;
       });
       metadata.sortedCategoricalValues = sortedUniqueValues.map((num) =>
         num.toString()
@@ -449,7 +449,11 @@ export class JointDataset {
       this.dataDict?.forEach((row, rowIndex) => {
         const numVal = row[key];
         row[key] = sortedUniqueValues.indexOf(numVal);
-        this.numericValuedColumnsCache[rowIndex][key] = numVal;
+        if (typeof numVal === "string") {
+          this.numericValuedColumnsCache[rowIndex][key] = 0;
+        } else {
+          this.numericValuedColumnsCache[rowIndex][key] = numVal;
+        }
       });
     } else {
       this.dataDict?.forEach((row, rowIndex) => {
@@ -663,7 +667,7 @@ export class JointDataset {
   }
 
   private updateMetaDataDict(
-    values: number[] | number[][],
+    values: number[] | number[][] | string[],
     metadata: IExplanationModelMetadata,
     labelColName: string,
     abbridgedLabel: string,
@@ -679,7 +683,7 @@ export class JointDataset {
             this.dataDict[index][labelColName + subIndex.toString()] = subVal;
           }
         });
-      } else if (this.dataDict) {
+      } else if (this.dataDict && typeof val !== "string") {
         this.dataDict[index][labelColName] = val;
       }
     });
