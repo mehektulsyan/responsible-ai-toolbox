@@ -26,8 +26,8 @@ export interface ITextLocalImportancePlotsProps {
 
 export interface ITextFeatureImportances {
   text: string[];
-  importances: number[][] | string[][];
-  prediction: number[] | string[];
+  importances: number[][];
+  prediction: number[];
 }
 
 export class TextLocalImportancePlots extends React.Component<ITextLocalImportancePlotsProps> {

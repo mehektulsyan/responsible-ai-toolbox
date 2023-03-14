@@ -217,7 +217,7 @@ export class TableView extends React.Component<
   private updateItems(): ITableViewTableState {
     let groups: IGroup[] | undefined;
 
-    let filteredDataRows: Array<{ [key: string]: string | number }> = [];
+    let filteredDataRows: Array<{ [key: string]: number }> = [];
     // assume classifier by default, otherwise regressor
     if (
       this.props.modelType &&

@@ -26,7 +26,7 @@ export class Cohort {
   private readonly cohortIndex: number;
   private cachedAverageImportance: number[] | undefined;
   private cachedTransposedLocalFeatureImportances: number[][] | undefined;
-  private currentSortKey: undefined;
+  private currentSortKey: undefined | string;
   private currentSortReversed = false;
 
   public constructor(

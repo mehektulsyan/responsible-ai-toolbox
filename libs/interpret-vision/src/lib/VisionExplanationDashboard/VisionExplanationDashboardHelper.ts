@@ -33,7 +33,7 @@ export const defaultImageSizes = {
 };
 
 export function mapClassNames(
-  labels: number[] | number[][],
+  labels: number[] | number[][] | string[],
   classNames: string[]
 ): string[] | string[][] {
   if (Array.isArray(labels[0])) {
