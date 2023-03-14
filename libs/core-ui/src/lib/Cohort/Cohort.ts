@@ -22,7 +22,7 @@ export enum CohortSource {
 export class Cohort {
   private static _cohortIndex = 0;
 
-  public filteredData: Array<{ [key: string]: number }>;
+  public filteredData: Array<{ [key: string]: string | number }>;
   private readonly cohortIndex: number;
   private cachedAverageImportance: number[] | undefined;
   private cachedTransposedLocalFeatureImportances: number[][] | undefined;
@@ -103,7 +103,7 @@ export class Cohort {
     this.filteredData = this.applyFilters();
   }
 
-  public getRow(index: number): { [key: string]: number } {
+  public getRow(index: number): { [key: string]: string | number } {
     return { ...this.jointDataset.dataDict?.[index] };
   }
 
@@ -210,7 +210,7 @@ export class Cohort {
   }
 
   private filterRow(
-    row: { [key: string]: number },
+    row: { [key: string]: number | string },
     filters: IFilter[]
   ): boolean {
     return filters
@@ -229,9 +229,9 @@ export class Cohort {
           case FilterMethods.LessThanEqualTo:
             return rowVal <= filter.arg[0];
           case FilterMethods.Includes:
-            return (filter.arg as number[]).includes(rowVal);
+            return (filter.arg as number[]).includes(Number(rowVal));
           case FilterMethods.Excludes:
-            return !(filter.arg as number[]).includes(rowVal);
+            return !(filter.arg as number[]).includes(Number(rowVal));
           case FilterMethods.InTheRangeOf:
             return rowVal >= filter.arg[0] && rowVal <= filter.arg[1];
           default:
@@ -241,7 +241,7 @@ export class Cohort {
   }
 
   private filterRecursively(
-    row: { [key: string]: number },
+    row: { [key: string]: string | number },
     compositeFilter: ICompositeFilter
   ): boolean {
     if (compositeFilter.method) {
@@ -255,7 +255,7 @@ export class Cohort {
   }
 
   private filterComposite(
-    row: { [key: string]: number },
+    row: { [key: string]: string | number },
     compositeFilters: ICompositeFilter[],
     operation: Operations
   ): boolean {
@@ -269,7 +269,7 @@ export class Cohort {
     );
   }
 
-  private applyFilters(): Array<{ [key: string]: number }> {
+  private applyFilters(): Array<{ [key: string]: string | number }> {
     this.clearCachedImportances();
     let filteredData = this.jointDataset.dataDict;
     if (!filteredData) {

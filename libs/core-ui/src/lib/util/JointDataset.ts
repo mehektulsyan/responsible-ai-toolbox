@@ -415,7 +415,7 @@ export class JointDataset {
     return this._modelMeta.classNames;
   }
 
-  public getRow(index: number): { [key: string]: number } {
+  public getRow(index: number): { [key: string]: string | number } {
     return { ...this.dataDict?.[index] };
   }
 
@@ -447,7 +447,7 @@ export class JointDataset {
     if (value) {
       const values = this.dataDict?.map((row) => row[key]);
       const sortedUniqueValues = _.uniq(values).sort((a, b) => {
-        return a - b;
+        return a - b ? typeof values === "number" : undefined;
       });
       metadata.sortedCategoricalValues = sortedUniqueValues.map((num) =>
         num.toString()

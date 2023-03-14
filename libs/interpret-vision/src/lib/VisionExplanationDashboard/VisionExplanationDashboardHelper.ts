@@ -119,8 +119,8 @@ export function getItems(
 > {
   const indices = new Set(
     props.selectedCohort.cohort.filteredData.map(
-      (row: { [key: string]: number }) => {
-        return row[JointDataset.IndexLabel] as number;
+      (row: { [key: string]: string | number }) => {
+        return row[JointDataset.IndexLabel] as string | number;
       }
     )
   );

@@ -37,7 +37,7 @@ export async function getTreatmentValue(
     setTestDataRow(parsedTestDataRow);
     treatmentValue = parsedTestDataRow[featureName];
   }
-  return treatmentValue;
+  return Number(treatmentValue);
 }
 
 export async function getTestDataRow(

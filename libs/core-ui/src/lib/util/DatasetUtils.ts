@@ -11,7 +11,7 @@ export interface ITableState {
 }
 
 export function areRowPredTrueLabelsEqual(
-  row: { [key: string]: number },
+  row: { [key: string]: string | number },
   jointDataset: JointDataset
 ): boolean {
   if (jointDataset.numLabels === 1) {
@@ -28,10 +28,10 @@ export function areRowPredTrueLabelsEqual(
 }
 
 export function constructRows(
-  cohortData: Array<{ [key: string]: number }>,
+  cohortData: Array<{ [key: string]: string | number }>,
   jointDataset: JointDataset,
   viewedRows: number,
-  filterFunction?: (row: { [key: string]: number }) => boolean,
+  filterFunction?: (row: { [key: string]: string | number }) => boolean,
   indexes?: number[],
   colors?: string[]
 ): any[] {
@@ -178,7 +178,7 @@ function pushRowData(
   tableRow: any[],
   property: string,
   jointDataset: JointDataset,
-  row: { [key: string]: number }
+  row: { [key: string]: string | number }
 ): void {
   const categories = jointDataset.metaDict[property].sortedCategoricalValues;
   if (jointDataset.metaDict[property].isCategorical && categories) {
@@ -192,7 +192,7 @@ function pushMultilabelRowData(
   tableRow: any[],
   property: string,
   jointDataset: JointDataset,
-  row: { [key: string]: number }
+  row: { [key: string]: string | number }
 ): void {
   const values = [];
   for (let i = 0; i < jointDataset.numLabels; i++) {
