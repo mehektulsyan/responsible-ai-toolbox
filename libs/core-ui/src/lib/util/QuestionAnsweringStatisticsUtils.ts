@@ -11,7 +11,25 @@ import {
 import { JointDataset } from "./JointDataset";
 
 export enum QuestionAnsweringMetrics {
-  ExactMatchRatio = "exactMatchRatio"
+  ExactMatchRatio = "exactMatchRatio",
+  F1Score = "f1Score"
+}
+
+function getf1Score(actual: string[], predicted: string[]): number {
+  const truePositives = actual.filter((value) =>
+    predicted.includes(value)
+  ).length;
+  const falsePositives = predicted.filter(
+    (value) => !actual.includes(value)
+  ).length;
+  const falseNegatives = actual.filter(
+    (value) => !predicted.includes(value)
+  ).length;
+
+  const precision = truePositives / (truePositives + falsePositives);
+  const recall = truePositives / (truePositives + falseNegatives);
+
+  return 2 * ((precision * recall) / (precision + recall));
 }
 
 export const generateQuestionAnsweringStats: (
@@ -39,6 +57,11 @@ export const generateQuestionAnsweringStats: (
     const sum = matchingLabels.reduce((prev, curr) => prev + curr, 0);
     const exactMatchRatio = sum / (numLabels * selectionArray.length);
 
+    const f1Score = getf1Score(
+      jointDataset.unwrap(JointDataset.TrueYLabel),
+      jointDataset.unwrap(JointDataset.PredictedYLabel)
+    );
+
     return [
       {
         key: TotalCohortSamples,
@@ -49,6 +72,11 @@ export const generateQuestionAnsweringStats: (
         key: QuestionAnsweringMetrics.ExactMatchRatio,
         label: localization.Interpret.Statistics.exactMatchRatio,
         stat: exactMatchRatio
+      },
+      {
+        key: QuestionAnsweringMetrics.F1Score,
+        label: localization.Interpret.Statistics.f1Score,
+        stat: f1Score
       }
     ];
   });

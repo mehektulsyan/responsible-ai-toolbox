@@ -440,8 +440,15 @@ export function getSelectableMetrics(
         key: MultilabelMetrics.ExactMatchRatio,
         text: localization.ModelAssessment.ModelOverview.metrics.exactMatchRatio
           .name
+      },
+      {
+        description:
+          localization.ModelAssessment.ModelOverview.metrics.f1Score
+            .description,
+        key: MultilabelMetrics.F1Score,
+        text: localization.ModelAssessment.ModelOverview.metrics.f1Score.name
       }
-    )
+    );
   } else {
     // task_type === "regression"
     selectableMetrics.push(

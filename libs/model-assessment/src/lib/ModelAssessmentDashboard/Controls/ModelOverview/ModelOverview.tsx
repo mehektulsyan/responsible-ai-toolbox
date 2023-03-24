@@ -151,7 +151,10 @@ export class ModelOverview extends React.Component<
     } else if (
       this.context.dataset.task_type === DatasetTaskType.QuestionAnswering
     ) {
-      defaultSelectedMetrics = [QuestionAnsweringMetrics.ExactMatchRatio];
+      defaultSelectedMetrics = [
+        QuestionAnsweringMetrics.ExactMatchRatio,
+        QuestionAnsweringMetrics.F1Score
+      ];
     } else {
       // task_type === "regression"
       defaultSelectedMetrics = [

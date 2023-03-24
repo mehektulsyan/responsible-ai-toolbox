@@ -12,7 +12,8 @@ import { JointDataset } from "./JointDataset";
 
 export enum MultilabelMetrics {
   ExactMatchRatio = "exactMatchRatio",
-  HammingScore = "hammingScore"
+  HammingScore = "hammingScore",
+  F1Score = "f1Score"
 }
 
 export const generateMultilabelStats: (
