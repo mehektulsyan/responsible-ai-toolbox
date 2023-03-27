@@ -39,23 +39,27 @@ export const generateQuestionAnsweringStats: (
   jointDataset: JointDataset,
   selectionIndexes: number[][]
 ): ILabeledStatistic[][] => {
-  const numLabels = jointDataset.numLabels;
   return selectionIndexes.map((selectionArray) => {
     const matchingLabels = [];
     const count = selectionArray.length;
-    for (let i = 0; i < numLabels; i++) {
-      const trueYs = jointDataset.unwrap(JointDataset.TrueYLabel + i);
-      const predYs = jointDataset.unwrap(JointDataset.PredictedYLabel + i);
-
-      const trueYSubset = selectionArray.map((i) => trueYs[i]);
-      const predYSubset = selectionArray.map((i) => predYs[i]);
-      matchingLabels.push(
-        trueYSubset.filter((trueY, index) => trueY === predYSubset[index])
-          .length
+    let trueYs: string[] = [];
+    let predYs: string[] = [];
+    if (jointDataset.strDataDict) {
+      trueYs = jointDataset.strDataDict.map(
+        (row) => row[JointDataset.TrueYLabel]
+      );
+      predYs = jointDataset.strDataDict.map(
+        (row) => row[JointDataset.PredictedYLabel]
       );
     }
+
+    const trueYSubset = selectionArray.map((i) => trueYs[i]);
+    const predYSubset = selectionArray.map((i) => predYs[i]);
+    matchingLabels.push(
+      trueYSubset.filter((trueY, index) => trueY === predYSubset[index]).length
+    );
     const sum = matchingLabels.reduce((prev, curr) => prev + curr, 0);
-    const exactMatchRatio = sum / (numLabels * selectionArray.length);
+    const exactMatchRatio = sum / selectionArray.length;
 
     const f1Score = getf1Score(
       jointDataset.unwrap(JointDataset.TrueYLabel),

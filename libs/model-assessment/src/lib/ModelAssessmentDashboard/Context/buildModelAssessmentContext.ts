@@ -37,7 +37,7 @@ export function buildInitialModelAssessmentContext(
   props: IModelAssessmentDashboardProps
 ): IModelAssessmentDashboardState {
   const modelMetadata = buildModelMetadata(props);
-  const modelType = getModelTypeFromProps(props);
+  const modelType = getModelTypeFromProps(props, modelMetadata.classNames);
   const columnRanges = getColumnRanges(props.dataset, modelType);
 
   let localExplanations:
