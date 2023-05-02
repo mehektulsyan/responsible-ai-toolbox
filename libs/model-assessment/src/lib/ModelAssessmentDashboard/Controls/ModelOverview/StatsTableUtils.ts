@@ -12,6 +12,7 @@ import {
   MulticlassClassificationMetrics,
   MultilabelMetrics,
   ObjectDetectionMetrics,
+  QuestionAnsweringMetrics,
   RegressionMetrics,
   TotalCohortSamples
 } from "@responsible-ai/core-ui";
@@ -468,7 +469,7 @@ export function getSelectableMetrics(
         description:
           localization.ModelAssessment.ModelOverview.metrics.exactMatchRatio
             .description,
-        key: MultilabelMetrics.ExactMatchRatio,
+        key: QuestionAnsweringMetrics.ExactMatchRatio,
         text: localization.ModelAssessment.ModelOverview.metrics.exactMatchRatio
           .name
       },
@@ -476,7 +477,7 @@ export function getSelectableMetrics(
         description:
           localization.ModelAssessment.ModelOverview.metrics.meteorScore
             .description,
-        key: MultilabelMetrics.MeteorScore,
+        key: QuestionAnsweringMetrics.MeteorScore,
         text: localization.ModelAssessment.ModelOverview.metrics.meteorScore
           .name
       },
@@ -484,21 +485,21 @@ export function getSelectableMetrics(
         description:
           localization.ModelAssessment.ModelOverview.metrics.f1Score
             .description,
-        key: MultilabelMetrics.F1Score,
+        key: QuestionAnsweringMetrics.F1Score,
         text: localization.ModelAssessment.ModelOverview.metrics.f1Score.name
       },
       {
         description:
           localization.ModelAssessment.ModelOverview.metrics.bleuScore
             .description,
-        key: MultilabelMetrics.BleuScore,
+        key: QuestionAnsweringMetrics.BleuScore,
         text: localization.ModelAssessment.ModelOverview.metrics.bleuScore.name
       },
       {
         description:
           localization.ModelAssessment.ModelOverview.metrics.rougeScore
             .description,
-        key: MultilabelMetrics.RougeScore,
+        key: QuestionAnsweringMetrics.RougeScore,
         text: localization.ModelAssessment.ModelOverview.metrics.rougeScore.name
       }
     );
